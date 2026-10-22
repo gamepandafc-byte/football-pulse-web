@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#07130e">
+<title>Football Pulse</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --green: #8cffb0;
+  --glass: rgba(20, 48, 34, .43);
+  --line: rgba(194, 255, 211, .19);
+  --text: #f3fff6;
+  --muted: #a7c5b0;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: Tahoma, Arial, sans-serif;
+  background:
+    radial-gradient(ellipse at 15% 15%, #24643a80, transparent 43%),
+    radial-gradient(ellipse at 90% 75%, #0c9c5a38, transparent 40%),
+    repeating-linear-gradient(112deg,
+      #163923 0px, #163923 9px,
+      #102d1d 9px, #102d1d 18px),
+    #07130e;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .25;
+  background:
+    repeating-linear-gradient(0deg,
+      transparent 0 49px, #b4ffc018 50px 51px),
+    linear-gradient(90deg, transparent 49.7%,
+      #d6ffe01c 50%, transparent 50.3%);
+  mask-image: linear-gradient(to bottom, transparent, black 25%, black);
+}
+.pitch {
+  position: fixed;
+  width: 290px;
+  height: 290px;
+  border: 1px solid #c2ffb21b;
+  border-radius: 50%;
+  top: 33%;
+  left: -155px;
+  pointer-events: none;
+}
+.pitch::after {
+  content: "";
+  position: absolute;
+  width: 95px;
+  height: 95px;
+  border: 1px solid #c2ffb21b;
+  border-radius: 50%;
+  top: 96px;
+  left: 96px;
+}
+.app {
+  width: min(100% - 28px, 470px);
+  margin: auto;
+  padding: 25px 0 35px;
+  position: relative;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ball {
+  display: grid;
+  place-items: center;
+  width: 51px;
+  height: 51px;
+  border: 1px solid #a0ffc34d;
+  border-radius: 17px;
+  background: linear-gradient(140deg, #b5ffcc35, #ffffff05);
+  box-shadow: 0 0 28px #36ff7c13, inset 0 1px #ffffff28;
+  font-size: 26px;
+}
+.brand { font-weight: 900; letter-spacing: .8px; font-size: 17px; }
+.sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.status {
+  font-size: 10px;
+  color: var(--green);
+  border: 1px solid #8cffb039;
+  background: #8cffb010;
+  padding: 7px 9px;
+  border-radius: 30px;
+}
+.hero {
+  position: relative;
+  padding: 23px 20px;
+  overflow: hidden;
+  border-radius: 25px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg,
+    rgba(103,255,151,.17), rgba(255,255,255,.035) 55%,
+    rgba(4,20,12,.35));
+  box-shadow: 0 15px 45px #0005, inset 0 1px #ffffff1c;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.hero::after {
+  content: "⚽";
+  position: absolute;
+  left: -10px;
+  top: 24px;
+  font-size: 95px;
+  opacity: .11;
+  transform: rotate(-20deg);
+}
+.eyebrow {
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+h1 { font-size: 27px; line-height: 1.6; margin: 10px 0 4px; }
+.hero p { color: #c0d9c7; font-size: 12px; margin: 0; line-height: 2; }
+.section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 26px 2px 13px;
+}
+.section strong { font-size: 14px; }
+.section span { color: var(--muted); font-size: 10px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+}
+.tile {
+  position: relative;
+  min-height: 112px;
+  padding: 16px 14px;
+  text-align: right;
+  color: var(--text);
+  font: inherit;
+  border: 1px solid var(--line);
+  border-radius: 19px;
+  cursor: pointer;
+  overflow: hidden;
+  background: linear-gradient(145deg,
+    rgba(180,255,199,.13), rgba(255,255,255,.045) 55%,
+    rgba(3,19,11,.46));
+  box-shadow: inset 0 1px #ffffff17, 0 8px 22px #0002;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform .15s, border-color .15s, background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tile:active {
+  transform: scale(.97);
+  border-color: #8cffb0a0;
+  background: #69ff9a24;
+}
+.tile::before {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  left: -35px;
+  bottom: -50px;
+  border-radius: 50%;
+  background: #71ff9c15;
+  filter: blur(8px);
+}
+.tile .ico { font-size: 27px; display: block; margin-bottom: 12px; }
+.tile b { display: block; font-size: 13px; position: relative; }
+.tile small { display: block; color: var(--muted); font-size: 10px; margin-top: 7px; position: relative; }
+.tile.featured {
+  background: linear-gradient(135deg, #78ff9b2d, #ffffff09 65%, #051c10a8);
+  border-color: #8cffb045;
+}
+.footer {
+  margin-top: 24px;
+  padding: 15px;
+  text-align: center;
+  border: 1px solid #ffffff12;
+  border-radius: 17px;
+  background: #ffffff06;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 2;
+}
+.footer strong { color: var(--green); }
+</style>
+</head>
+<body>
+<div class="pitch"></div>
+<main class="app">
+  <header class="top">
+    <div class="logo">
+      <div class="ball">⚽</div>
+      <div>
+        <div class="brand">FOOTBALL PULSE</div>
+        <div class="sub">YOUR FOOTBALL UNIVERSE</div>
+      </div>
+    </div>
+    <div class="status">● ONLINE</div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">ULTIMATE FOOTBALL EXPERIENCE</div>
+    <h1>زمین بازی توئه!</h1>
+    <p>تیمت رو بساز، رقابت کن و به قلهٔ فوتبال برس.</p>
+  </section>
+
+  <div class="section">
+    <strong>منوی اصلی</strong>
+    <span>MAIN HUB / 01</span>
+  </div>
+
+  <section class="grid">
+    <button class="tile featured" data-action="profile">
+      <span class="ico">👤</span>
+      <b>پروفایل من</b>
+      <small>اطلاعات و آمار بازیکن</small>
+    </button>
+    <button class="tile" data-action="team">
+      <span class="ico">🏟️</span>
+      <b>تیم من</b>
+      <small>ترکیب و مدیریت تیم</small>
+    </button>
+    <button class="tile" data-action="matches">
+      <span class="ico">⚽</span>
+      <b>مسابقات</b>
+      <small>رقابت و بازی فوتبالی</small>
+    </button>
+    <button class="tile" data-action="market">
+      <span class="ico">🃏</span>
+      <b>بازار بازیکنان</b>
+      <small>کارت‌ها و نقل‌وانتقالات</small>
+    </button>
+    <button class="tile" data-action="missions">
+      <span class="ico">🎯</span>
+      <b>مأموریت‌ها</b>
+      <small>چالش‌ها و پاداش‌ها</small>
+    </button>
+    <button class="tile" data-action="wallet">
+      <span class="ico">🪙</span>
+      <b>کیف پول</b>
+      <small>سکه‌ها و موجودی</small>
+    </button>
+    <button class="tile" data-action="ranking">
+      <span class="ico">🏆</span>
+      <b>جدول رده‌بندی</b>
+      <small>بهترین بازیکنان</small>
+    </button>
+    <button class="tile" data-action="settings">
+      <span class="ico">⚙️</span>
+      <b>تنظیمات</b>
+      <small>تنظیمات حساب کاربری</small>
+    </button>
+  </section>
+
+  <footer class="footer">
+    <strong>FOOTBALL PULSE</strong><br>
+    بازی کن • پیشرفت کن • قهرمان شو
+  </footer>
+</main>
+<script>
+const tg = window.Telegram?.WebApp;
+tg?.ready();
+tg?.expand();
+
+document.querySelectorAll("[data-action]").forEach(button => {
+  button.addEventListener("click", () => {
+    const action = button.dataset.action;
+    if (tg?.initData) {
+      tg.sendData(JSON.stringify({ action }));
+    } else {
+      alert("پیش‌نمایش منو: " + button.innerText.trim());
+    }
+  });
+});
+</script>
+</body>
+</html>
